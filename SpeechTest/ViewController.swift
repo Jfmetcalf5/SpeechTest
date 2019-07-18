@@ -46,12 +46,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
   func startRecording() throws {
     let node = audioEngine.inputNode
     let recordingFormat = node.outputFormat(forBus: 0)
-//    if !UserDefaults.standard.bool(forKey: "isInstalled") {
-      node.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, _) in
-        self.request.append(buffer)
-      }
-//      UserDefaults.standard.set(true, forKey: "isInstalled")
-//    }
+    node.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, _) in
+      self.request.append(buffer)
+    }
     audioEngine.prepare()
     try audioEngine.start()
     
@@ -64,6 +61,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
       if result.isFinal {
         self.textLabel.text = "Final Result: \(result.bestTranscription.formattedString)"
         self.stopRecording()
+        node.removeTap(onBus: 0)
       }
     })
   }
